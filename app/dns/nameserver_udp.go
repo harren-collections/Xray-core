@@ -2,9 +2,9 @@ package dns
 
 import (
 	"context"
+	"math/rand"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/xtls/xray-core/common"
@@ -31,7 +31,6 @@ type ClassicNameServer struct {
 	pub           *pubsub.Service
 	udpServer     *udp.Dispatcher
 	cleanup       *task.Periodic
-	reqID         uint32
 	queryStrategy QueryStrategy
 }
 
@@ -176,7 +175,7 @@ func (s *ClassicNameServer) updateIP(domain string, newRec *record) {
 }
 
 func (s *ClassicNameServer) newReqID() uint16 {
-	return uint16(atomic.AddUint32(&s.reqID, 1))
+	return uint16(rand.Intn(65535) + 1) // no zero
 }
 
 func (s *ClassicNameServer) addPendingRequest(req *dnsRequest) {
