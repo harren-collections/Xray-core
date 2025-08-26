@@ -309,12 +309,8 @@ func (r *PacketReader) ReadMultiBuffer() (buf.MultiBuffer, error) {
 	// if udp dest addr is changed, we are unable to get the correct src addr
 	// so we don't attach src info to udp packet, break cone behavior, assuming the dial dest is the expected scr addr
 	if !r.IsOverridden {
-		address := net.IPAddress(d.(*net.UDPAddr).IP)
-		if r.InitChangedAddr == address {
-			address = r.InitUnchangedAddr
-		}
 		b.UDP = &net.Destination{
-			Address: address,
+			Address: net.IPAddress(d.(*net.UDPAddr).IP),
 			Port:    net.Port(d.(*net.UDPAddr).Port),
 			Network: net.Network_UDP,
 		}
